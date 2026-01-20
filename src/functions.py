@@ -2,7 +2,7 @@ import numpy as np
 
 def compute_firing_rate(spikes, response_times, active_cluster_ids):
         
-    win = 0.2
+    win = 0.2 # time window
 
     # sort response times
     rt_order = np.argsort(response_times)
@@ -25,7 +25,7 @@ def compute_firing_rate(spikes, response_times, active_cluster_ids):
     sc_v = sc[valid_trial]
 
     # now safe to index rt[trial_idx_v]
-    valid_time = (st_v >= (rt[trial_idx_v] - win)) & (st_v < rt[trial_idx_v])
+    valid_time = (st_v >= (rt[trial_idx_v] - 2)) & (st_v < rt[trial_idx_v] - 1.8) # change the window
 
     trial_idx_v = trial_idx_v[valid_time]
     cids = sc_v[valid_time]
@@ -48,3 +48,6 @@ def compute_firing_rate(spikes, response_times, active_cluster_ids):
     firing_rates[rt_order, :] = firing_rates_sorted
 
     return firing_rates
+
+# the time window [firstmovement_time - 0.2, firstmovement_time] create a better prediction accuracy
+# than the time window [firstmovement_time - 0.4, firstmovement_time - 0.2]

@@ -44,10 +44,9 @@ trials = one.load_object(eid, "trials")
 print(trials.keys())
 
 # Filter out NaN values, Build ONE mask for "go" trials (keep alignment across all fields)
-go_mask = ~np.isnan(trials['response_times'])
-
+go_mask = ~np.isnan(trials['firstMovement_times']) # use response_times is same 
 # apply same mask to everything trial-aligned
-response_times = trials['response_times'][go_mask] # movement is immediately after the wheel move
+response_times = trials['firstMovement_times'][go_mask] # movement is immediately after the wheel move
 choices = trials['choice'][go_mask]
 
 # Keep original trial indices too (very useful for debugging / merging later)
@@ -56,7 +55,7 @@ trial_ids = np.flatnonzero(go_mask)
 # filter clusters to only those with spikes in any 200ms pre-choice windows
 mask = np.zeros(len(spikes['times']), dtype=bool)
 for rt in response_times:
-    mask |= (spikes['times'] >= rt - 0.2) & (spikes['times'] < rt)
+    mask |= (spikes['times'] >= rt - 2) & (spikes['times'] < rt - 1.8)
 active_cluster_ids = np.unique(spikes['clusters'][mask]) 
 print(f"Active clusters (with spikes in pre-choice windows): {len(active_cluster_ids)}")
 
